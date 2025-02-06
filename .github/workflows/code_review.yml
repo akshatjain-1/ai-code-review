@@ -1,0 +1,43 @@
+name: AI-Powered Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+
+      - name: Build Backend
+        run: ./mvnw clean package
+
+      # (Optional) Run tests and start the backend service in the background.
+      # In production you might run integration tests that call your backend endpoints.
+
+      - name: Run Code Review (simulate API call)
+        run: |
+          # This is a simple simulation.
+          java -jar target/code-review-backend.jar --spring.profiles.active=ci
+
+      - name: Post GitHub Comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          COMMENT_BODY=$(curl -s http://localhost:8080/review -X POST -H "Content-Type: application/json" \
+          -d '{"repository": "'"${REPO}"'", "commitId": "dummy-commit", "code": "print(eval(\"2+2\"))"}' \
+          | jq -r '.suggestions | join("\n")')
+          curl -H "Authorization: token ${GITHUB_TOKEN}" \
+               -X POST \
+               -d "{\"body\": \"AI Code Review Results:\n\n${COMMENT_BODY}\"}" \
+               https://api.github.com/repos/${REPO}/issues/${PR_NUMBER}/comments
