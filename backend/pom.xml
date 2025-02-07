@@ -4,7 +4,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
-		<packaging>jar</packaging>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
@@ -12,6 +11,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>backend</name>
 	<description>A Spring Boot backend for an AI-powered code review system that analyzes code and provides automated feedback.</description>
 	<url/>

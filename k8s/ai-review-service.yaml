@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-review-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-review-service
+  template:
+    metadata:
+      labels:
+        app: ai-review-service
+    spec:
+      containers:
+      - name: ai-service
+        image: your-dockerhub-user/ai-review-service:latest
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-review-service
+spec:
+  selector:
+    app: ai-review-service
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
