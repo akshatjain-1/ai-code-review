@@ -15,10 +15,11 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '17'
+          distribution : 'temurin'
 
       - name: Build Backend
-        run: ./mvnw clean package
+        run: ./mvn clean package
 
       # (Optional) Run tests and start the backend service in the background.
       # In production you might run integration tests that call your backend endpoints.
