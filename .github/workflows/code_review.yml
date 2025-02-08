@@ -28,7 +28,7 @@ jobs:
       - name: Run Code Review (simulate API call)
         run: |
           # This is a simple simulation.
-          java -jar target/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=ci
+          cd backend && java -jar target/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=ci
 
       - name: Post GitHub Comment
         env:
