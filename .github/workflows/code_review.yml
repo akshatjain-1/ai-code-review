@@ -19,7 +19,7 @@ jobs:
           distribution : 'temurin'
 
       - name: Build Backend
-        run: ./mvn clean package
+        run: mvn clean package
 
       # (Optional) Run tests and start the backend service in the background.
       # In production you might run integration tests that call your backend endpoints.
