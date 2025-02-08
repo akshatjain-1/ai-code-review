@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [  ]
+    branches: [ test_branch1, ]
   pull_request:
-    branches: [ main ]
+    branches: [ test_branch1 ]
 
 jobs:
   build:
@@ -25,6 +25,9 @@ jobs:
 
       - name: Verify Maven Installation
         run: mvn -version
+
+      - name: Check File Structure
+        run: ls -R  # This will list all files & help debug missing files
 
       - name: Build Backend
         working-directory: backend
