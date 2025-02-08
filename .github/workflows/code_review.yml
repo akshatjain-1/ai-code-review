@@ -19,9 +19,8 @@ jobs:
           distribution : 'temurin'
 
       - name: Build Backend
-        run: 
-          cd backend
-          mvn clean package
+        run: cd backend && mvn clean package
+          
 
       # (Optional) Run tests and start the backend service in the background.
       # In production you might run integration tests that call your backend endpoints.
@@ -29,7 +28,6 @@ jobs:
       - name: Run Code Review (simulate API call)
         run: |
           # This is a simple simulation.
-          cd backend
           java -jar target/code-review-backend.jar --spring.profiles.active=ci
 
       - name: Post GitHub Comment
