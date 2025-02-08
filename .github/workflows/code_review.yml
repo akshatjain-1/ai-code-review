@@ -29,6 +29,7 @@ jobs:
         run: |
           # This is a simple simulation.
           cd backend && java -jar target/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=ci
+          sleep 10
 
       - name: Post GitHub Comment
         env:
