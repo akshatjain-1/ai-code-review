@@ -1,4 +1,4 @@
-name: AI-Powered Code Review
+name: AI Code Review
 
 on:
   pull_request:
@@ -15,10 +15,12 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '17'
+          distribution : 'temurin'
 
       - name: Build Backend
-        run: ./mvnw clean package
+        run: cd backend && mvn clean package
+          
 
       # (Optional) Run tests and start the backend service in the background.
       # In production you might run integration tests that call your backend endpoints.
@@ -26,7 +28,8 @@ jobs:
       - name: Run Code Review (simulate API call)
         run: |
           # This is a simple simulation.
-          java -jar target/code-review-backend.jar --spring.profiles.active=ci
+          cd backend && java -jar target/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=ci &
+          sleep 10
 
       - name: Post GitHub Comment
         env:
