@@ -29,6 +29,9 @@ jobs:
           java -jar target/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=ci &  
           sleep 15
 
+      - name: "Print backend logs"
+        run: cat backend/logs/backend.log
+
       - name: "Post GitHub Comment"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
