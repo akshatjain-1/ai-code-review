@@ -38,18 +38,22 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
-          COMMENT_BODY=$(curl -s http://localhost:8080/review -X POST -H "Content-Type: application/json" \
-          -d '{"repository": "'"${REPO}"'", "commitId": "dummy-commit", "code": "print(eval(\"2+2\"))"}' \
-          | jq -r '.suggestions | join("\n")' || echo "Error: API request failed")
-
-          echo "COMMENT_BODY=${COMMENT_BODY}"  # Debug: Print API response
-
+          RESPONSE=$(curl -s -X POST http://localhost:8080/review -H "Content-Type: application/json" \
+            -d '{"repository": "'"${REPO}"'", "commitId": "dummy-commit", "code": "print(eval(\"2+2\"))"}')
+      
+          echo "🔍 Backend Response: ${RESPONSE}"  # Debugging: Print API response
+      
+          COMMENT_BODY=$(echo "${RESPONSE}" | jq -r '.suggestions | join("\n")' || echo "Error: API request failed")
+          
+          echo "📝 COMMENT_BODY=${COMMENT_BODY}"  # Debugging: Print parsed comment
+      
           if [ -z "$COMMENT_BODY" ] || [ "$COMMENT_BODY" == "Error: API request failed" ]; then
             echo "❌ API request to backend failed. Exiting."
             exit 1
           fi
-
+      
           curl -H "Authorization: token ${GITHUB_TOKEN}" \
                -X POST \
                -d "{\"body\": \"AI Code Review Results:\n\n${COMMENT_BODY}\"}" \
                https://api.github.com/repos/${REPO}/issues/${PR_NUMBER}/comments
+      
