@@ -1,4 +1,4 @@
-name: "Run Code Review"
+name: " AI Run Code Review"
 
 on:
   pull_request:
@@ -28,7 +28,7 @@ jobs:
           cd backend
           java -jar target/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=ci &  
           sleep 20
-          
+
 
       - name: "Check if backend is running"
         run: curl http://localhost:8080/review || echo "Backend not responding"
@@ -39,7 +39,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
-          RESPONSE=$(curl -s -X POST http://localhost:8080/review -H "Content-Type: application/json" \
+          RESPONSE=$(curl -s -X POST http://localhost:8080/review -H "Content-Type: application/vnd.spring-boot.actuator.v3+json" \
             -d '{"repository": "'"${REPO}"'", "commitId": "dummy-commit", "code": "print(eval(\"2+2\"))"}')
       
           echo "🔍 Backend Response: ${RESPONSE}"  # Debugging: Print API response
