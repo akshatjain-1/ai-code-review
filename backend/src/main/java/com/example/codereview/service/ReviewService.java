@@ -26,7 +26,7 @@ public class ReviewService {
     public ReviewService(WebClient.Builder webClientBuilder) {
         // The URL "http://ai-review-service:8000" is used when running in Kubernetes;
         // for local testing you might use "http://localhost:8000"
-        this.webClient = webClientBuilder.baseUrl("http://ai-review-service:8000").build();
+        this.webClient = webClientBuilder.baseUrl("http://localhost:8000").build();
     }
 
     public CodeReviewResponse processReview(CodeReviewRequest request) {

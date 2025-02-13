@@ -1,4 +1,4 @@
-name: AI-Powered Code Review
+name: " AI Run Code Review"
 
 on:
   pull_request:
@@ -9,35 +9,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: "Checkout code"
         uses: actions/checkout@v2
 
-      - name: Set up Java
+      - name: "Set up Java"
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name: Build Backend
-        run: ./mvnw clean package
-
-      # (Optional) Run tests and start the backend service in the background.
-      # In production you might run integration tests that call your backend endpoints.
-
-      - name: Run Code Review (simulate API call)
+      - name: "Build Backend"
         run: |
-          # This is a simple simulation.
-          java -jar target/code-review-backend.jar --spring.profiles.active=ci
+          cd backend
+          mvn clean package
 
-      - name: Post GitHub Comment
+      - name: "Run Code Review"
+        run: |
+          cd backend
+          java -jar target/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=ci &  
+          sleep 20
+
+
+      - name: "Check if backend is running"
+        run: curl http://localhost:8080/review || echo "Backend not responding"
+
+      - name: "Post GitHub Comment"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
-          COMMENT_BODY=$(curl -s http://localhost:8080/review -X POST -H "Content-Type: application/json" \
-          -d '{"repository": "'"${REPO}"'", "commitId": "dummy-commit", "code": "print(eval(\"2+2\"))"}' \
-          | jq -r '.suggestions | join("\n")')
+          RESPONSE=$(curl -s -X POST http://localhost:8080/review -H "Content-Type: application/vnd.spring-boot.actuator.v3+json" \
+            -d '{"repository": "'"${REPO}"'", "commitId": "dummy-commit", "code": "print(eval(\"2+2\"))"}')
+      
+          echo "🔍 Backend Response: ${RESPONSE}"  # Debugging: Print API response
+      
+          COMMENT_BODY=$(echo "${RESPONSE}" | jq -r '.suggestions | join("\n")' || echo "Error: API request failed")
+          
+          echo "📝 COMMENT_BODY=${COMMENT_BODY}"  # Debugging: Print parsed comment
+      
+          if [ -z "$COMMENT_BODY" ] || [ "$COMMENT_BODY" == "Error: API request failed" ]; then
+            echo "❌ API request to backend failed. Exiting."
+            exit 1
+          fi
+      
           curl -H "Authorization: token ${GITHUB_TOKEN}" \
                -X POST \
                -d "{\"body\": \"AI Code Review Results:\n\n${COMMENT_BODY}\"}" \
                https://api.github.com/repos/${REPO}/issues/${PR_NUMBER}/comments
+      
