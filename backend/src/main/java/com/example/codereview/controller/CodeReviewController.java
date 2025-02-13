@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/")
 public class CodeReviewController {
 
     @PostMapping("/review")
