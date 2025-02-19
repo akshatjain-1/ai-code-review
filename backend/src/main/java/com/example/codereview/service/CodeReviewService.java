@@ -21,7 +21,7 @@ public class CodeReviewService {
         String commentsUrl = prUrl + "/comments";
         JSONObject body = new JSONObject();
         body.put("body", comment);
-        String token = "your_personal_access_token"; // Ensure to replace with actual token or configure it securely
+        String token = "ai-code_review-token"; // Ensure to replace with actual token or configure it securely
         restTemplate.postForObject(commentsUrl, body.toString(), String.class);
     }
 }
