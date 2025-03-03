@@ -1,0 +1,41 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ test_branch1 ]
+  pull_request:
+    branches: [ test_branch1 ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Maven on GitHub Runner
+        run: sudo apt-get update && sudo apt-get install -y maven
+
+      - name: Verify Maven Installation
+        run: mvn -version
+
+      # 🔍 Debugging: Show folder structure
+      - name: Debug - Show Current Directory
+        run: pwd  # Print current working directory
+
+      - name: Debug - List All Files
+        run: ls -R  # Show all files and confirm locations
+
+      # 🛠 Fix: Ensure Maven runs in the backend folder
+      - name: Build Backend
+        run: |
+          cd backend  # Move into backend directory
+          ls -l pom.xml  # Confirm pom.xml exists
+          mvn clean package
