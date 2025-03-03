@@ -42,4 +42,8 @@ public class CodeReviewService {
         restTemplate.postForObject(commentsUrl, body.toString(), String.class);
 
     }
+
+    public void processPullRequest(String payload) {
+        // TODO: Implement pull request processing logic
+    }
 }
