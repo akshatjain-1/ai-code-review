@@ -28,7 +28,7 @@ public class CodeReviewService {
         }
     }
 
-    private void analyzeFile(String filename) {
+    public void analyzeFile(String filename) {
         // Add your analysis logic here
     }
 
